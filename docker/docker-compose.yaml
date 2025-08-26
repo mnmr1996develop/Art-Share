@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_art_share
+    command: postgres -c 'max_connections=200'
+    environment:
+      POSTGRES_DB: art_share
+      POSTGRES_USER: mnmr1996development
+      POSTGRES_PASSWORD: mnmr1996development
+    volumes:
+      - ./postgres_art_share:/var/lib/postgresql/data
+    networks:
+      - keycloak-network-art_share
+    restart: unless-stopped   
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mnmr1996development -d art_share"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+  
+  pgadmin:
+    container_name: art_share_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes: 
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 5050:80
+    networks:
+      - keycloak-network-art_share
+
+volumes:
+  pgadmin:
+
+networks:
+  keycloak-network-art_share:
+    driver: bridge
