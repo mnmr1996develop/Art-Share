@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.michaelrichards.artshare.naviagtion.Navigation
 import com.michaelrichards.artshare.ui.theme.ArtShareTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ArtShareTheme {
-
+                Scaffold { paddingValues -> Navigation(modifier = Modifier.padding(paddingValues)) }
             }
         }
     }
