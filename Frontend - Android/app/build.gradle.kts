@@ -59,4 +59,10 @@ dependencies {
 
     // navigation
     implementation(libs.androidx.navigation.compose)
+
+    // material themes
+    implementation(libs.androidx.material.icons.extended.android)
+
+    //coil for images
+    implementation(libs.coil.compose)
 }
