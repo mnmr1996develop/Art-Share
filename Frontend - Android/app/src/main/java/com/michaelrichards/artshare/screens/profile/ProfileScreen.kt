@@ -12,11 +12,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
     ProfileComposable(
         modifier = modifier,
         userResponse = mockUserResponse,
-        onUsernameClick = {  },
+        navController = navController,
+        onUsernameClick = { },
         onProfileImageClick = {},
         onPostsClick = {},
         onFollowersClick = {},
         onFollowingClick = {},
-        onEditProfileCLick = {}
+        onEditProfileCLick = {},
     )
 }

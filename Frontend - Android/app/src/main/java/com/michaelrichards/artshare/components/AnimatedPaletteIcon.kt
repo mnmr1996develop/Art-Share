@@ -25,7 +25,7 @@ fun AnimatedPaletteIcon(progress: Float) {
             style = Stroke(width = strokeWidth.toPx())
         )
 
-        // Animated arc
+
         val sweepAngle = progress * 360f
         drawArc(
             color = Color.White,
@@ -35,7 +35,7 @@ fun AnimatedPaletteIcon(progress: Float) {
             style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
         )
 
-        // Paint brush icon in the center (appears when animation completes)
+
         if (progress > 0.8f) {
             val brushAlpha = ((progress - 0.8f) * 5f).coerceIn(0f, 1f)
             drawCircle(

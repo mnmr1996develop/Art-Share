@@ -4,36 +4,46 @@ package com.michaelrichards.artshare.screens.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
 import androidx.compose.material.icons.twotone.Lock
 import androidx.compose.material.icons.twotone.LockOpen
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import androidx.navigation.NavController
 import com.michaelrichards.artshare.R
+import com.michaelrichards.artshare.components.ArtBottomNavigationBar
+import com.michaelrichards.artshare.components.PhotoGrid
+import com.michaelrichards.artshare.components.UserProfileColumn
+import com.michaelrichards.artshare.dto.PhotoItem
 import com.michaelrichards.artshare.dto.UserResponse
+import com.michaelrichards.artshare.dto.samplePhotos
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.Period
 import java.util.UUID
@@ -42,6 +52,7 @@ import java.util.UUID
 fun ProfileComposable(
     modifier: Modifier = Modifier,
     userResponse: UserResponse,
+    navController: NavController,
     onUsernameClick: () -> Unit,
     onProfileImageClick: () -> Unit,
     onPostsClick: () -> Unit,
@@ -49,6 +60,17 @@ fun ProfileComposable(
     onFollowingClick: () -> Unit,
     onEditProfileCLick: () -> Unit
 ) {
+
+    var photos by remember { mutableStateOf<List<PhotoItem>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(1000) // Simulate network delay
+        photos = samplePhotos
+        isLoading = false
+    }
+
+
     Scaffold(
         topBar = {
             Row(
@@ -73,71 +95,30 @@ fun ProfileComposable(
                 }
             }
         },
+        bottomBar = {
+            ArtBottomNavigationBar(navController)
+        },
         modifier = modifier.padding(8.dp)
     ) { paddingValues ->
 
         Column(modifier = Modifier
             .padding(paddingValues)
             .fillMaxWidth()) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                AsyncImage(
-                    modifier = Modifier
-                        .size(75.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray, CircleShape)
-                        .clickable(onClick = onProfileImageClick),
-                    model = userResponse.avatarUrl,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null
-                )
 
-                Spacer(modifier = Modifier.width(16.dp))
 
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row {
-                        Text(userResponse.firstName, style = MaterialTheme.typography.headlineSmall)
-                        Spacer(Modifier.width(4.dp))
-                        Text(userResponse.lastName, style = MaterialTheme.typography.headlineSmall)
-                    }
+            UserProfileColumn(
+                avatarUrl = userResponse.avatarUrl,
+                firstName = userResponse.firstName,
+                lastName = userResponse.lastName,
+                artworkCount = userResponse.artworkCount,
+                followerCount = userResponse.followerCount,
+                followingCount = userResponse.followingCount,
+                onPostsClick = onPostsClick,
+                onFollowingClick = onFollowingClick,
+                onFollowersClick = onFollowersClick,
+                onProfileImageClick = onProfileImageClick,
+            )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable(onClick = onPostsClick)
-                        ) {
-                            Text(
-                                stringResource(R.string.posts),
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                            Text("${userResponse.artworkCount}")
-                        }
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable(onClick = onFollowersClick)
-                        ) {
-                            Text(
-                                stringResource(R.string.followers),
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                            Text("${userResponse.followerCount}")
-                        }
-
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable(onClick = onFollowingClick)
-                        ) {
-                            Text(
-                                stringResource(R.string.following),
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                            Text("${userResponse.followingCount}")
-                        }
-                    }
-                }
-            }
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -146,7 +127,24 @@ fun ProfileComposable(
                 }
             }
             Text(userResponse.bio)
+
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else {
+                    PhotoGrid(photos = photos)
+                }
+            }
         }
+
+
     }
 }
 
@@ -154,16 +152,18 @@ fun ProfileComposable(
 @Composable
 private fun PreviewProfile() {
 
+    val navController = NavController(LocalContext.current)
 
     ProfileComposable(
         userResponse = mockUserResponse,
         modifier = Modifier,
-        onUsernameClick = {  },
+        onUsernameClick = { },
         onProfileImageClick = {},
         onPostsClick = {},
         onFollowersClick = {},
         onFollowingClick = {},
-        onEditProfileCLick = {}
+        onEditProfileCLick = {},
+        navController = navController
     )
 }
 

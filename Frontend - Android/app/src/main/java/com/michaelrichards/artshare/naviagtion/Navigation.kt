@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.michaelrichards.artshare.screens.home.HomeScreen
 import com.michaelrichards.artshare.screens.profile.ProfileScreen
 import com.michaelrichards.artshare.screens.splash.SplashScreen
 
@@ -32,6 +33,10 @@ fun Navigation(modifier: Modifier = Modifier) {
         ) {
             composable(route = Screens.ProfileScreen.routeName){
                 ProfileScreen(navController = navController, modifier = modifier)
+            }
+
+            composable(route = Screens.HomeScreen.routeName){
+                HomeScreen(navController = navController, modifier = modifier)
             }
 
         }
