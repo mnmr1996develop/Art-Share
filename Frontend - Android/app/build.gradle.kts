@@ -65,4 +65,7 @@ dependencies {
 
     //coil for images
     implementation(libs.coil.compose)
+
+    implementation(libs.androidx.animation.graphics)
+    implementation(libs.ui.tooling.preview)
 }

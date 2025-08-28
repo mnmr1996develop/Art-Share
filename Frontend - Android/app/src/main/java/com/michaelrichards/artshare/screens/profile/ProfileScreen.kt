@@ -6,5 +6,17 @@ import androidx.navigation.NavController
 
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier, navController: NavController) {
-    ProfileComposable(modifier = modifier, mockUserResponse)
+
+
+
+    ProfileComposable(
+        modifier = modifier,
+        userResponse = mockUserResponse,
+        onUsernameClick = {  },
+        onProfileImageClick = {},
+        onPostsClick = {},
+        onFollowersClick = {},
+        onFollowingClick = {},
+        onEditProfileCLick = {}
+    )
 }

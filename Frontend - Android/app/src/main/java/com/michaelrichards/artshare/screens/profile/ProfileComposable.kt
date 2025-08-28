@@ -2,6 +2,7 @@ package com.michaelrichards.artshare.screens.profile
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +39,16 @@ import java.time.Period
 import java.util.UUID
 
 @Composable
-fun ProfileComposable(modifier: Modifier = Modifier, userResponse: UserResponse) {
+fun ProfileComposable(
+    modifier: Modifier = Modifier,
+    userResponse: UserResponse,
+    onUsernameClick: () -> Unit,
+    onProfileImageClick: () -> Unit,
+    onPostsClick: () -> Unit,
+    onFollowersClick: () -> Unit,
+    onFollowingClick: () -> Unit,
+    onEditProfileCLick: () -> Unit
+) {
     Scaffold(
         topBar = {
             Row(
@@ -46,6 +56,7 @@ fun ProfileComposable(modifier: Modifier = Modifier, userResponse: UserResponse)
             ) {
 
                 Row(
+                    modifier = Modifier.clickable(onClick = onUsernameClick),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -65,13 +76,16 @@ fun ProfileComposable(modifier: Modifier = Modifier, userResponse: UserResponse)
         modifier = modifier.padding(8.dp)
     ) { paddingValues ->
 
-        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth()) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 AsyncImage(
                     modifier = Modifier
                         .size(75.dp)
                         .clip(CircleShape)
-                        .background(Color.LightGray, CircleShape),
+                        .background(Color.LightGray, CircleShape)
+                        .clickable(onClick = onProfileImageClick),
                     model = userResponse.avatarUrl,
                     contentScale = ContentScale.Crop,
                     contentDescription = null
@@ -86,23 +100,39 @@ fun ProfileComposable(modifier: Modifier = Modifier, userResponse: UserResponse)
                         Text(userResponse.lastName, style = MaterialTheme.typography.headlineSmall)
                     }
 
-                    Row (
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
-                    ){
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(stringResource(R.string.posts), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable(onClick = onPostsClick)
+                        ) {
+                            Text(
+                                stringResource(R.string.posts),
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                            )
                             Text("${userResponse.artworkCount}")
                         }
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(stringResource(R.string.followers), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable(onClick = onFollowersClick)
+                        ) {
+                            Text(
+                                stringResource(R.string.followers),
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                            )
                             Text("${userResponse.followerCount}")
                         }
 
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable(onClick = onFollowingClick)
                         ) {
-                            Text(stringResource(R.string.following), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                            Text(
+                                stringResource(R.string.following),
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                            )
                             Text("${userResponse.followingCount}")
                         }
                     }
@@ -111,7 +141,7 @@ fun ProfileComposable(modifier: Modifier = Modifier, userResponse: UserResponse)
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = onEditProfileCLick, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.edit_profile))
                 }
             }
@@ -125,7 +155,16 @@ fun ProfileComposable(modifier: Modifier = Modifier, userResponse: UserResponse)
 private fun PreviewProfile() {
 
 
-    ProfileComposable(userResponse = mockUserResponse)
+    ProfileComposable(
+        userResponse = mockUserResponse,
+        modifier = Modifier,
+        onUsernameClick = {  },
+        onProfileImageClick = {},
+        onPostsClick = {},
+        onFollowersClick = {},
+        onFollowingClick = {},
+        onEditProfileCLick = {}
+    )
 }
 
 
